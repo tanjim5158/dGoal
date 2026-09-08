@@ -9,5 +9,6 @@ data class Task(
     val id: Int = 0,
     val title: String,
     var completed: Boolean = false,
-    var completedDays: MutableSet<Int> = mutableSetOf()
+    var completedDays: MutableSet<Int> = mutableSetOf(),
+    var isInMonthlyGoal: Boolean = false
 )

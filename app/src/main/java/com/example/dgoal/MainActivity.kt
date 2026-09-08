@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     private var tasks = mutableListOf<Task>()
 
-    private var monthlyGoal = 0
+
 
     private lateinit var db: AppDatabase
 
@@ -31,9 +31,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = AppDatabase.getDatabase(this)
-
-        val prefs = getSharedPreferences("dgoal_prefs", MODE_PRIVATE)
-        monthlyGoal = prefs.getInt("monthly_goal", 0)
 
         setupButtons()
 
@@ -107,36 +104,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSetGoalDialog() {
 
-        val input = TextInputEditText(this)
+        if (tasks.isEmpty()) {
 
-        input.hint = "Number of tasks"
-        input.inputType =
-            android.text.InputType.TYPE_CLASS_NUMBER
+            MaterialAlertDialogBuilder(this)
+                .setTitle("No tasks yet")
+                .setMessage("Add some tasks first, then come back to choose which ones count toward your monthly goal.")
+                .setPositiveButton("OK", null)
+                .show()
 
-        input.setPadding(50, 20, 50, 20)
+            return
+        }
+
+        val taskNames = tasks.map { it.title }.toTypedArray()
+
+        val checkedItems = tasks.map { it.isInMonthlyGoal }.toBooleanArray()
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Set Monthly Goal")
-            .setMessage("How many tasks do you want to complete this month?")
-            .setView(input)
+            .setMessage("Choose which tasks to track this month. Each one's target is to be completed every day of the month.")
+            .setMultiChoiceItems(taskNames, checkedItems) { _, which, isChecked ->
+                checkedItems[which] = isChecked
+            }
             .setNegativeButton("Cancel", null)
-            .setPositiveButton("Set") { _, _ ->
+            .setPositiveButton("Save") { _, _ ->
 
-                val goalText = input.text.toString().trim()
+                tasks.forEachIndexed { index, task ->
 
-                if (goalText.isNotEmpty()) {
+                    task.isInMonthlyGoal = checkedItems[index]
 
-                    val goal = goalText.toIntOrNull()
-
-                    if (goal != null && goal > 0) {
-
-                        monthlyGoal = goal
-
-                        val prefs = getSharedPreferences("dgoal_prefs", MODE_PRIVATE)
-                        prefs.edit().putInt("monthly_goal", goal).apply()
-
-                        updateMonthlyGoalUI()
-
+                    lifecycleScope.launch {
+                        db.taskDao().updateTask(task)
                     }
                 }
             }
@@ -145,24 +142,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateMonthlyGoalUI() {
 
-        if (monthlyGoal <= 0) {
+        val goalTasks = tasks.filter { it.isInMonthlyGoal }
+
+        if (goalTasks.isEmpty()) {
 
             binding.monthlyGoalText.text =
                 "No monthly goal set"
 
             binding.monthlyGoalProgress.text =
-                "Set a goal and start making progress."
+                "Tap below to choose tasks for this month."
 
             return
         }
 
-        val completed = tasks.count { it.completed }
+        val daysInMonth = java.util.Calendar.getInstance()
+            .getActualMaximum(java.util.Calendar.DAY_OF_MONTH)
 
-        val progress =
-            (completed * 100 / monthlyGoal).coerceAtMost(100)
+        val target = goalTasks.size * daysInMonth
+
+        val completed = goalTasks.sumOf {
+            it.completedDays.size.coerceAtMost(daysInMonth)
+        }
+
+        val progress = (completed * 100 / target).coerceAtMost(100)
 
         binding.monthlyGoalText.text =
-            "$completed / $monthlyGoal tasks completed"
+            "$completed / $target days completed"
 
         binding.monthlyGoalProgress.text =
             "$progress%"
