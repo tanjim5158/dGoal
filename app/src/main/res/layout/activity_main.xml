@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F7F8FA">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#0A1F35">
 
     <!-- Main Content -->
     <ScrollView
@@ -24,45 +28,27 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_header_gradient"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_dark_topbar"
                 android:padding="24dp"
                 android:elevation="4dp">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="dGoal"
-                        android:textColor="#FFFFFF"
-                        android:textSize="26sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Let's achieve your goals."
-                        android:textColor="#E5DFFC"
-                        android:textSize="14sp" />
-
-                </LinearLayout>
+                    android:text="dGoal"
+                    android:textColor="#FFFFFF"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/settingsButton"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_icon_circle_purple"
-                    android:gravity="center"
-                    android:text="⚙"
-                    android:textColor="#6C4CE0"
-                    android:textSize="20sp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Let's achieve your goals."
+                    android:textColor="#8FA8C4"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -72,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:text="Today's Progress"
-                android:textColor="#17191C"
+                android:textColor="#FFFFFF"
                 android:textSize="19sp"
                 android:textStyle="bold" />
 
@@ -81,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_card_rounded"
+                android:background="@drawable/bg_dark_card"
                 android:elevation="3dp"
                 android:orientation="vertical"
                 android:padding="24dp">
@@ -113,7 +99,7 @@
                     android:layout_marginTop="12dp"
                     android:gravity="center"
                     android:text="0 of 0 tasks completed"
-                    android:textColor="#777B82"
+                    android:textColor="#8FA8C4"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -124,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:text="Today's Tasks"
-                android:textColor="#17191C"
+                android:textColor="#FFFFFF"
                 android:textSize="19sp"
                 android:textStyle="bold" />
 
@@ -134,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:background="#FFFFFF"
+                android:background="@drawable/bg_dark_card"
                 android:elevation="2dp"
                 android:gravity="center"
                 android:minHeight="100dp"
@@ -146,7 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No tasks yet"
-                    android:textColor="#777B82"
+                    android:textColor="#8FA8C4"
                     android:textSize="15sp" />
 
                 <TextView
@@ -154,117 +140,81 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="Tap + to add your first task"
-                    android:textColor="#A0A4AA"
+                    android:textColor="#5E7FA3"
                     android:textSize="13sp" />
 
             </LinearLayout>
 
-            <!-- Add Task Button -->
-            <Button
-                android:id="@+id/addTaskButton"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="14dp"
-                android:text="+  Add Task"
-                android:textSize="16sp" />
 
-            <!-- Monthly Goal -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="Monthly Goal"
-                android:textColor="#17191C"
-                android:textSize="19sp"
-                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+        <!-- Goals Screen (Monthly Goals) -->
+        <ScrollView
+            android:id="@+id/goalsScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:background="#0A1F35"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/monthlyGoalText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No monthly goal set"
-                    android:textColor="#17191C"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/monthlyGoalProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Set a goal and start making progress."
-                    android:textColor="#777B82"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:id="@+id/setGoalButton"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="14dp"
-                    android:text="Set Monthly Goal" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_dark_topbar"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="dGoal"
+                        android:textColor="#FFFFFF"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="See how each task is tracking this month."
+                        android:textColor="#8FA8C4"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:id="@+id/goalsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-    </ScrollView>
-
-    <!-- Goals Screen (Monthly Goals) -->
-    <ScrollView
-        android:id="@+id/goalsScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Monthly Goals"
-                android:textColor="#17191C"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
-                android:text="See how each task is tracking this month."
-                android:textColor="#777B82"
-                android:textSize="14sp" />
-
-            <LinearLayout
-                android:id="@+id/goalsContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
-        </LinearLayout>
-
-    </ScrollView>
+        </ScrollView>
 
     <!-- Bottom Navigation -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/bg_dark_topbar"
         android:elevation="8dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -275,7 +225,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="⌂&#10;Home"
-            android:textSize="12sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:backgroundTint="@android:color/transparent" />
 
         <Button
             android:id="@+id/tasksButton"
@@ -283,7 +235,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="✓&#10;Tasks"
-            android:textSize="12sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:backgroundTint="@android:color/transparent" />
 
         <Button
             android:id="@+id/goalsButton"
@@ -291,8 +245,29 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="★&#10;Goals"
-            android:textSize="12sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:backgroundTint="@android:color/transparent" />
 
     </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addTaskButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="90dp"
+        android:background="@drawable/bg_fab_purple"
+        android:insetLeft="0dp"
+        android:insetRight="0dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="+"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:elevation="6dp" />
+
+</FrameLayout>

@@ -13,7 +13,7 @@ class PieChartView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
-    // Percentage from 0 to 100. Change this and call invalidate() to redraw.
+    // Percentage from 0 to 100. Change this and it redraws automatically.
     var percentage: Int = 0
         set(value) {
             field = value.coerceIn(0, 100)
@@ -21,13 +21,15 @@ class PieChartView @JvmOverloads constructor(
         }
 
     private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#E5E7EB") // light gray
-        style = Paint.Style.FILL
+        color = Color.parseColor("#3D6591")
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
     }
 
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#6C4CE0") // purple, matches app theme
-        style = Paint.Style.FILL
+        color = Color.parseColor("#C7B8FA")
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
     }
 
     private val rectF = RectF()
@@ -36,15 +38,21 @@ class PieChartView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         val size = minOf(width, height).toFloat()
-        val padding = 4f
+        val strokeWidth = size * 0.1f
 
+        backgroundPaint.strokeWidth = strokeWidth
+        progressPaint.strokeWidth = strokeWidth
+
+        val padding = strokeWidth / 2f + 2f
         rectF.set(padding, padding, size - padding, size - padding)
 
-        // Draw the full gray circle first (the "empty" background)
-        canvas.drawArc(rectF, 0f, 360f, true, backgroundPaint)
+        // Full faint ring first (the "track")
+        canvas.drawArc(rectF, 0f, 360f, false, backgroundPaint)
 
-        // Draw the purple slice on top, starting from the top (-90 degrees)
+        // Progress ring on top, starting from the top, sweeping clockwise
         val sweepAngle = 360f * (percentage / 100f)
-        canvas.drawArc(rectF, -90f, sweepAngle, true, progressPaint)
+        if (sweepAngle > 0f) {
+            canvas.drawArc(rectF, -90f, sweepAngle, false, progressPaint)
+        }
     }
 }

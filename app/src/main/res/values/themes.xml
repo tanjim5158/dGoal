@@ -13,4 +13,11 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="DarkAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">#0E2B4E</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorPrimary">#6C4CE0</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#8FA8C4</item>
+    </style>
 </resources>

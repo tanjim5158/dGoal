@@ -50,9 +50,7 @@ class MainActivity : AppCompatActivity() {
             showAddTaskDialog()
         }
 
-        binding.setGoalButton.setOnClickListener {
-            showSetGoalDialog()
-        }
+
 
         binding.homeButton.setOnClickListener {
             showMainScreen()
@@ -81,11 +79,13 @@ class MainActivity : AppCompatActivity() {
     private fun showAddTaskDialog() {
 
         val input = TextInputEditText(this)
-        input.hint = "Enter task name"
-        input.setPadding(50, 20, 50, 20)
+        input.hint = "Enter Task Here"
+        input.setTextColor(Color.parseColor("#FFFFFF"))
+        input.setHintTextColor(Color.parseColor("#7FA3C7"))
+        input.setPadding(50, 30, 50, 20)
 
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Add New Task")
+        MaterialAlertDialogBuilder(this, R.style.DarkAlertDialog)
+            .setTitle("What is to be done?")
             .setView(input)
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Add") { _, _ ->
@@ -102,76 +102,8 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun showSetGoalDialog() {
 
-        if (tasks.isEmpty()) {
 
-            MaterialAlertDialogBuilder(this)
-                .setTitle("No tasks yet")
-                .setMessage("Add some tasks first, then come back to choose which ones count toward your monthly goal.")
-                .setPositiveButton("OK", null)
-                .show()
-
-            return
-        }
-
-        val taskNames = tasks.map { it.title }.toTypedArray()
-
-        val checkedItems = tasks.map { it.isInMonthlyGoal }.toBooleanArray()
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Set Monthly Goal")
-            .setMessage("Choose which tasks to track this month. Each one's target is to be completed every day of the month.")
-            .setMultiChoiceItems(taskNames, checkedItems) { _, which, isChecked ->
-                checkedItems[which] = isChecked
-            }
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("Save") { _, _ ->
-
-                tasks.forEachIndexed { index, task ->
-
-                    task.isInMonthlyGoal = checkedItems[index]
-
-                    lifecycleScope.launch {
-                        db.taskDao().updateTask(task)
-                    }
-                }
-            }
-            .show()
-    }
-
-    private fun updateMonthlyGoalUI() {
-
-        val goalTasks = tasks.filter { it.isInMonthlyGoal }
-
-        if (goalTasks.isEmpty()) {
-
-            binding.monthlyGoalText.text =
-                "No monthly goal set"
-
-            binding.monthlyGoalProgress.text =
-                "Tap below to choose tasks for this month."
-
-            return
-        }
-
-        val daysInMonth = java.util.Calendar.getInstance()
-            .getActualMaximum(java.util.Calendar.DAY_OF_MONTH)
-
-        val target = goalTasks.size * daysInMonth
-
-        val completed = goalTasks.sumOf {
-            it.completedDays.size.coerceAtMost(daysInMonth)
-        }
-
-        val progress = (completed * 100 / target).coerceAtMost(100)
-
-        binding.monthlyGoalText.text =
-            "$completed / $target days completed"
-
-        binding.monthlyGoalProgress.text =
-            "$progress%"
-    }
 
     private fun updateTaskUI() {
 
@@ -183,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                 TextView(this).apply {
                     text = "No tasks yet\nTap + Add Task to create your first task"
                     textSize = 15f
-                    setTextColor(Color.parseColor("#777B82"))
+                    setTextColor(Color.parseColor("#8FA8C4"))
                     gravity = android.view.Gravity.CENTER
                 }
             )
@@ -200,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                 val checkBox = CheckBox(this).apply {
                     text = task.title
                     textSize = 16f
-                    setTextColor(Color.parseColor("#17191C"))
+                    setTextColor(Color.parseColor("#FFFFFF"))
                     isChecked = task.completed
 
                     setOnCheckedChangeListener { _, isChecked ->
@@ -225,6 +157,8 @@ class MainActivity : AppCompatActivity() {
                 val deleteButton = ImageButton(this).apply {
                     setImageResource(android.R.drawable.ic_menu_delete)
                     contentDescription = "Delete Task"
+                    setColorFilter(Color.parseColor("#E57373"))
+                    background = null
 
                     setOnClickListener {
                         lifecycleScope.launch {
@@ -255,7 +189,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         updateProgress()
-        updateMonthlyGoalUI()
     }
 
     private fun updateGoalsUI() {
@@ -268,6 +201,7 @@ class MainActivity : AppCompatActivity() {
                 TextView(this).apply {
                     text = "No tasks yet\nAdd tasks to start tracking monthly goals"
                     textSize = 15f
+                    setTextColor(Color.parseColor("#8FA8C4"))
                     gravity = android.view.Gravity.CENTER
                 }
             )
@@ -289,14 +223,38 @@ class MainActivity : AppCompatActivity() {
             val percentage =
                 (task.completedDays.size * 100 / daysInMonth).coerceAtMost(100)
 
+            // Container that stacks the ring and the letter circle on top of each other
+            val ringSize = 130
+            val ringStack = android.widget.FrameLayout(this).apply {
+                layoutParams = LinearLayout.LayoutParams(ringSize, ringSize)
+            }
+
             val pieChart = PieChartView(this).apply {
                 this.percentage = percentage
             }
 
-            row.addView(
+            ringStack.addView(
                 pieChart,
-                LinearLayout.LayoutParams(120, 120)
+                android.widget.FrameLayout.LayoutParams(ringSize, ringSize)
             )
+
+            val letterCircle = TextView(this).apply {
+                text = task.title.take(1).uppercase()
+                textSize = 18f
+                setTextColor(Color.parseColor("#FFFFFF"))
+                gravity = android.view.Gravity.CENTER
+                background = androidx.core.content.ContextCompat.getDrawable(
+                    this@MainActivity,
+                    R.drawable.bg_circle_ring_light
+                )
+            }
+
+            val innerSize = (ringSize * 0.72f).toInt()
+            val letterParams = android.widget.FrameLayout.LayoutParams(innerSize, innerSize)
+            letterParams.gravity = android.view.Gravity.CENTER
+            ringStack.addView(letterCircle, letterParams)
+
+            row.addView(ringStack)
 
             val textColumn = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
@@ -307,7 +265,7 @@ class MainActivity : AppCompatActivity() {
                 TextView(this).apply {
                     text = task.title
                     textSize = 16f
-                    setTextColor(Color.parseColor("#17191C"))
+                    setTextColor(Color.parseColor("#FFFFFF"))
                 }
             )
 
@@ -315,7 +273,7 @@ class MainActivity : AppCompatActivity() {
                 TextView(this).apply {
                     text = "${task.completedDays.size} / $daysInMonth days — $percentage%"
                     textSize = 13f
-                    setTextColor(Color.parseColor("#777B82"))
+                    setTextColor(Color.parseColor("#8FA8C4"))
                 }
             )
 
