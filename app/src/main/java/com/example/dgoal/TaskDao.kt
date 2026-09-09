@@ -21,4 +21,7 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks ORDER BY id ASC")
     fun getAllTasks(): Flow<List<Task>>
+
+    @Query("SELECT * FROM tasks ORDER BY id ASC")
+    suspend fun getAllTasksOnce(): List<Task>
 }

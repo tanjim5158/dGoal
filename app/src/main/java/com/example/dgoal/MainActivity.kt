@@ -35,12 +35,42 @@ class MainActivity : AppCompatActivity() {
         setupButtons()
 
         lifecycleScope.launch {
+            resetCompletedIfNewDay()
+        }
+
+        lifecycleScope.launch {
             db.taskDao().getAllTasks().collect { taskList ->
 
                 tasks = taskList.toMutableList()
 
                 updateTaskUI()
             }
+        }
+    }
+
+    private suspend fun resetCompletedIfNewDay() {
+
+        val prefs = getSharedPreferences("dgoal_prefs", MODE_PRIVATE)
+
+        val today = java.text.SimpleDateFormat(
+            "yyyy-MM-dd",
+            java.util.Locale.getDefault()
+        ).format(java.util.Date())
+
+        val lastOpenedDate = prefs.getString("last_opened_date", null)
+
+        if (lastOpenedDate != today) {
+
+            val allTasks = db.taskDao().getAllTasksOnce()
+
+            allTasks.forEach { task ->
+                if (task.completed) {
+                    task.completed = false
+                    db.taskDao().updateTask(task)
+                }
+            }
+
+            prefs.edit().putString("last_opened_date", today).apply()
         }
     }
 
